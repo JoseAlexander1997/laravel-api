@@ -68,9 +68,18 @@ class UsuarioController extends Controller
      * Display the specified resource.
      */
     public function show(string $id)
-    {
-        //
+{
+    $usuario = Usuario::find($id);
+
+    if (!$usuario) {
+        return response()->json([
+            'message' => 'Usuario no encontrado',
+        ], 404);
     }
+
+    return response()->json($usuario, 200);
+}
+
 
     /**
      * Show the form for editing the specified resource.
@@ -84,43 +93,38 @@ class UsuarioController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {
-        $usuario = Usuario::findOrFail($id);
+{
+    $usuario = Usuario::findOrFail($id);
 
-        if ($usuario->rol !== 'admin') {
-            return response()->json([
-                'message' => 'Solo los usuarios con rol admin pueden ser actualizados.',
-                'status' => false
-            ], 422);
-        }
+    $validated = $request->validate([
+        'nombre' => 'sometimes|required|string|max:150',
+        'email' => 'sometimes|required|email|max:150|unique:usuarios,email,' . $usuario->id,
+        'password' => 'nullable|string|min:6',
+        'rol' => 'sometimes|required|string',
+    ]);
 
-        $validated = $request->validate([
-            'nombre' => 'sometimes|required|string|max:150',
-            'email' => 'sometimes|required|email|max:150|unique:usuarios,email,' . $usuario->id,
-            'password' => 'nullable|string|min:6',
-            'rol' => 'sometimes|required|string',
-        ]);
-
-        // Mensaje claro si mandan un rol inválido
-        if (isset($validated['rol']) && !in_array($validated['rol'], ['admin', 'usuario'])) {
-            return response()->json([
-                'message' => 'El rol ingresado no es válido, debe ser "admin" o "usuario".'
-            ], 422);
-        }
-
-        if (!empty($validated['password'])) {
-            $validated['password'] = Hash::make($validated['password']);
-        } else {
-            unset($validated['password']); // no sobrescribir con null
-        }
-
-        $usuario->update($validated);
-
+    // Validar rol si se envía
+    if (isset($validated['rol']) && !in_array($validated['rol'], ['admin', 'usuario'])) {
         return response()->json([
-            'message' => 'Usuario actualizado correctamente',
-            'data' => $usuario
-        ], 200);
+            'message' => 'El rol ingresado no es válido, debe ser "admin" o "usuario".'
+        ], 422);
     }
+
+    // Solo hashear password si se envía
+    if (!empty($validated['password'])) {
+        $validated['password'] = Hash::make($validated['password']);
+    } else {
+        unset($validated['password']);
+    }
+
+    $usuario->update($validated);
+
+    return response()->json([
+        'message' => 'Usuario actualizado correctamente',
+        'data' => $usuario
+    ], 200);
+}
+
 
 
     /**
