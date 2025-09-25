@@ -56,3 +56,20 @@ Route::middleware('auth:sanctum')->get('/tareas/exportPendientes', [TareaControl
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+
+Route::middleware('auth:sanctum')->prefix('usuarios')->group(function () {
+    Route::get('/listUsers', [UsuarioController::class, 'index']);
+    Route::post('/addUser', [UsuarioController::class, 'store']);
+    Route::get('/getUser/{id}', [UsuarioController::class, 'show']);
+    Route::put('/updateUser/{id}', [UsuarioController::class, 'update']);
+    Route::delete('/deleteUser/{id}', [UsuarioController::class, 'destroy']);
+});
+
+Route::middleware('auth:sanctum')->prefix('tareas')->group(function () {
+    Route::get('/listTareas', [TareaController::class, 'index']);
+    Route::post('/addTarea', [TareaController::class, 'store']);
+    Route::get('/getTarea/{id}', [TareaController::class, 'show']);
+    Route::put('/updateTarea/{id}', [TareaController::class, 'update']);
+    Route::delete('/deleteTarea/{id}', [TareaController::class, 'destroy']);
+    Route::get('/exportPendientes', [TareaController::class, 'exportPendientes']);
+});

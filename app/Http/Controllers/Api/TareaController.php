@@ -99,9 +99,9 @@ class TareaController extends Controller
 
     public function exportPendientes()
     {
-        // Forzar cabeceras correctas
         return Excel::download(new TareasPendientesExport, 'tareas_pendientes.xlsx');
     }
+
 }
 
 
