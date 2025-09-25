@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Exports\TareasPendientesExport;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Tarea;
@@ -92,4 +94,14 @@ class TareaController extends Controller
 
         return response()->json(['message' => 'Tarea eliminada correctamente'], 200);
     }
+
+   
+
+    public function exportPendientes()
+    {
+        // Forzar cabeceras correctas
+        return Excel::download(new TareasPendientesExport, 'tareas_pendientes.xlsx');
+    }
 }
+
+

@@ -45,7 +45,13 @@ Route::prefix('tareas')->group(function () {
     Route::get('/getTarea/{id}', [TareaController::class, 'show']); // Obtener una tarea
     Route::put('/updateTarea/{id}', [TareaController::class, 'update']); // Actualizar
     Route::delete('/deleteTarea/{id}', [TareaController::class, 'destroy']); // Eliminar
+    Route::get('/tareas/exportPendientes', [TareaController::class, 'exportPendientes']);
+
+
 });
+
+Route::middleware('auth:sanctum')->get('/tareas/exportPendientes', [TareaController::class, 'exportPendientes']);
+
 
 
 Route::post('/login', [AuthController::class, 'login']);
