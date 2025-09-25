@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UsuarioController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\TareaController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -33,7 +35,18 @@ Route::prefix('usuarios')->group(function () {
     Route::get('/getUser/{id}', [UsuarioController::class, 'show']);
     Route::put('/updateUser/{id}', [UsuarioController::class, 'update']);
     Route::delete('/deleteUser/{id}', [UsuarioController::class, 'destroy']);
+    Route::delete('/deleteTarea/{id}', [TareaController::class, 'destroy']); // Eliminar
+
 });
+
+Route::prefix('tareas')->group(function () {
+    Route::get('/listTareas', [TareaController::class, 'index']); // Listar todas
+    Route::post('/addTarea', [TareaController::class, 'store']); // Crear
+    Route::get('/getTarea/{id}', [TareaController::class, 'show']); // Obtener una tarea
+    Route::put('/updateTarea/{id}', [TareaController::class, 'update']); // Actualizar
+    Route::delete('/deleteTarea/{id}', [TareaController::class, 'destroy']); // Eliminar
+});
+
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
